@@ -19,7 +19,7 @@ _[Windows 11]_
 **Linux/ROS environment type:**  
 _[Choose one:]_
 - [ ] Dual-boot Ubuntu
-- [√] WSL2 Ubuntu
+- WSL2 Ubuntu
 - [ ] Ubuntu in VM (UTM/VirtualBox/VMware/Parallels)
 - [ ] Docker container
 - [ ] Lab PC
@@ -44,7 +44,7 @@ source /root/PolyU-AAE5303-env-smork-test/.venv/bin/activate
 ```
 
 **Any deviations from the default instructions:**  
-_[None, perfect instructions and template]_
+_[No, it's a perfect instructions and template]_
 
 ### 2.2 Test Results
 
@@ -327,8 +327,11 @@ Short but thoughtful:
 **Your reflection:**
 
 _[Have a comprehensive experience of configure the ROS2 development environment mannually due to cursors'limit]_
+
 _[Cursor is such a powerful development platform except for a little bit expensive for me]_
+
 _[Next time I may try something new for partitioning in computer or directly use VM ware to visualize the system, it's important to keep environment clean and easy to understand.]_ 
+
 _[Always positive, thanks for detailed instruction like presentation and template, it's a really massive work!]_
 
 ---
@@ -352,13 +355,13 @@ _[Date of submission]_
 
 Before submitting, ensure you have:
 
-- [√] Filled in all system information
-- [√] Included actual terminal outputs (not just screenshots)
-- [√] Provided at least 2 screenshots (Python tests + ROS talker/listener)
-- [√] Documented 2–3 real problems with solutions
-- [√] Completed the AI usage section with exact prompts
-- [√] Written a thoughtful reflection (3–5 sentences)
-- [√] Signed the declaration
+- Filled in all system information
+- Included actual terminal outputs (not just screenshots)
+- Provided at least 2 screenshots (Python tests + ROS talker/listener)
+- Documented 2–3 real problems with solutions
+- Completed the AI usage section with exact prompts
+- Written a thoughtful reflection (3–5 sentences)
+- Signed the declaration
 
 ---
 
