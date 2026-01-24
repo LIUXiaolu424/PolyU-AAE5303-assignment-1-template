@@ -213,68 +213,69 @@ ros2 launch env_check_pkg env_check.launch.py
 
 ## 4. Problems Encountered and How I Solved Them
 
-> **Note:** Write 2–3 issues, even if small. This section is crucial — it demonstrates understanding and problem-solving.
+---
 
-### Issue 1: [Write the exact error message or problem]
+### Issue 1: `ros2 run env_check_pkg talker.py` → “No executable found”
 
 **Cause / diagnosis:**  
-_[Explain what you think caused it]_
+ROS 2's `ros2 run` only recognises **entry names registered in `setup.py`/`CMakeLists.txt`** and does not directly execute `.py` files; It is unnecessary to appended the `.py` suffix.
 
 **Fix:**  
-_[The exact command/config change you used to solve it]_
+Remove the suffix and use the entry name instead.
 
 ```bash
-[Your fix command/code here]
+ros2 run env_check_pkg talker
 ```
 
 **Reference:**  
-_[Official ROS docs? StackOverflow? AI assistant? Something else?]_
+ROS 2 Official Tutorial ‘Writing a simple publisher and subscriber (Python)’ Step 5 `ros2 run` example.
 
 ---
 
-### Issue 2: [Another real error or roadblock]
+### Issue 2: `❌ ROS 2 workspace build failed (exit 1)` 
 
 **Cause / diagnosis:**  
-_[Explain what you think caused it]_
+CMake invokes the system Python `/usr/bin/python3` to parse `package.xml`, but the system lacks the `catkin_pkg` module, resulting in the overlay compilation failing.
 
 **Fix:**  
-_[The exact command/config change you used to solve it]_
+After installing the missing dependencies using system pip, recompile.
 
 ```bash
-[Your fix command/code here]
+pip3 install --break-system-packages catkin_pkg lark
+cd ros2_ws
+rm -rf build install log
+colcon build --symlink-install
 ```
 
 **Reference:**  
-_[Official ROS docs? StackOverflow? AI assistant? Something else?]_
+ROS Answers “ModuleNotFoundError: catkin_pkg when building ROS 2” + CMake stderr awareness.
 
 ---
 
-### Issue 3 (Optional): [Title]
+### Issue 3: Running `apt update` returns a `502 Bad Gateway` error, preventing the installation of dependencies.
 
 **Cause / diagnosis:**  
-_[Explain what you think caused it]_
+archive.ubuntu.com experienced a brief outage, with the default repository within the container being blocked or unstable.
 
 **Fix:**  
-_[The exact command/config change you used to solve it]_
+Temporarily switch to the Tsinghua mirror and clear the old cache:
 
 ```bash
-[Your fix command/code here]
+cp /etc/apt/sources.list /etc/apt/sources.list.bak
+sed -i 's|http://archive.ubuntu.com|https://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
+apt clean
+apt update
 ```
 
-**Reference:**  
-_[Official ROS docs? StackOverflow? AI assistant? Something else?]_
+**Reference：**  
+User Guide for Tsinghua University's Open Source Software Mirror Site
 
 ---
 
 ## 5. Use of Generative AI (Required)
 
-Choose one of the issues above and document how you used AI to solve it.
-
-> **Goal:** Show critical use of AI, not blind copying.
-
 ### 5.1 Exact prompt you asked
 
-**Your prompt:**
 ```
 解释一下这两句的作用(source /opt/ros/foxy/setup.bash, source /root/PolyU-AAE5303-env-smork-test/ros2_ws/install/setup.bash)
 ```
@@ -294,24 +295,28 @@ Choose one of the issues above and document how you used AI to solve it.
 
 ### 5.3 What you changed or ignored and why
 
-Explain briefly:
-- Did the AI recommend something unsafe?
-- Did you modify its solution?
-- Did you double-check with official docs?
-
-**Your explanation:**  
-_[Write your analysis here]_
+- The AI explanation was conceptually correct but **too generic**: it only said “source underlay then overlay” without mentioning that **CMake calls the system Python**, so the *real* blocker was the missing `catkin_pkg` module at `/usr/bin/python3`.  
+- I **ignored the AI’s blanket “source both files” advice** until I had installed the system-level dependency; otherwise the overlay would still fail to compile.  
+- I **cross-verified** the build error against [ROS 2 Foxy build docs](https://docs.ros.org/en/foxy/Installation/Ubuntu-Development-Setup.html) and ROS Answers posts that list `python3-catkin-pkg` as a prerequisite.
 
 ### 5.4 Final solution you applied
 
-Show the exact command or file edit that fixed the problem:
-
 ```bash
-[Your final command/code here]
+# 1. Install missing *system* Python packages (CMake uses /usr/bin/python3)
+pip3 install --break-system-packages catkin_pkg lark
+
+# 2. Clean and rebuild the overlay workspace
+cd ~/PolyU-AAE5303-env-smork-test/ros2_ws
+rm -rf build install log
+colcon build --symlink-install
+
+# 3. Load environments in the correct order (AI suggestion, verified by me)
+source /opt/ros/foxy/setup.bash
+source install/setup.bash
 ```
 
 **Why this worked:**  
-_[Brief explanation]_
+_[`catkin_pkg` provides the XML parser that `ament_cmake` invokes during `colcon build`; once it exists in the system Python, the overlay compiles successfully and `ros2 pkg executables env_check_pkg` lists the custom nodes, turning the体检 script from FAIL to PASS.]_
 
 ---
 
